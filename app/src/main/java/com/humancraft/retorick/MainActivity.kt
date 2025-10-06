@@ -19,15 +19,27 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RetoRickTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    val uiState = viewModel.uiState.collectAsState().value
+                    CharacterScreen(
+                        uiState = uiState,
+                        onRefresh = { viewModel.fetchCharacters(viewModel.getLastValid().first) },
+                        onManualRefresh = { viewModel.fetchCharacters(viewModel.getLastValid().first) }
                     )
                 }
             }
         }
+        // Primera carga
+        viewModel.fetchCharacters(1)
     }
+    private val viewModel: CharacterViewModel by viewModels()
+}
+import androidx.activity.viewModels
+import com.humancraft.retorick.ui.screen.CharacterScreen
+import com.humancraft.retorick.ui.screen.CharacterViewModel
+import com.humancraft.retorick.ui.screen.UiState
+import dagger.hilt.android.AndroidEntryPoint
+@AndroidEntryPoint
 }
 
 @Composable
