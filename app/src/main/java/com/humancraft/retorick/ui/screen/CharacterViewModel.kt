@@ -1,9 +1,12 @@
 package com.humancraft.retorick.ui.screen
 
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.humancraft.retorick.data.model.Character
 import com.humancraft.retorick.data.repository.CharacterRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,7 +18,10 @@ sealed class UiState {
     object Loading : UiState()
 }
 
-class CharacterViewModel(private val repository: CharacterRepository) : ViewModel() {
+@HiltViewModel
+class CharacterViewModel @Inject constructor(
+    private val repository: CharacterRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState.InitialLoading)
     val uiState: StateFlow<UiState> = _uiState
 

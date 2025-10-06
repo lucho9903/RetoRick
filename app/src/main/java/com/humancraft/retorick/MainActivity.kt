@@ -6,9 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
 import com.humancraft.retorick.ui.screen.CharacterScreen
 import com.humancraft.retorick.ui.screen.CharacterViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.compose.runtime.collectAsState
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
