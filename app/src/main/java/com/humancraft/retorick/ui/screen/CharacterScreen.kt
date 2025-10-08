@@ -1,6 +1,5 @@
 package com.humancraft.retorick.ui.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -24,7 +22,6 @@ fun CharacterScreen(
 ) {
     var showError by remember { mutableStateOf<String?>(null) }
 
-    // Auto refresh every 10 seconds after first load
     LaunchedEffect(uiState) {
         if (uiState is UiState.Success) {
             while (true) {
@@ -40,28 +37,23 @@ fun CharacterScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
             is UiState.Loading -> {
-                // Show previous data with a loading indicator
                 (uiState as? UiState.Success)?.let {
                     CharacterList(it.page, it.characters)
                 }
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter))
             }
             is UiState.Success -> {
                 CharacterList(uiState.page, uiState.characters)
             }
             is UiState.Error -> {
                 showError = uiState.message
-                // Show last valid data if available
             }
         }
-        // Manual refresh button
         Button(
             onClick = onManualRefresh,
             modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
         ) {
             Text("Refrescar")
         }
-        // Error message (Toast/Banner style)
         showError?.let { msg ->
             Snackbar(
                 modifier = Modifier.align(Alignment.TopCenter),
@@ -100,15 +92,15 @@ fun CharacterItem(character: Character) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = character.image,
-            contentDescription = character.name,
+            model = character.image ?: "",
+            contentDescription = character.name ?: "",
             modifier = Modifier.size(64.dp),
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column {
-            Text(text = character.name, fontWeight = FontWeight.Bold)
-            Text(text = character.status)
+            Text(text = character.name ?: "Sin nombre", fontWeight = FontWeight.Bold)
+            Text(text = character.status ?: "Sin estado")
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.humancraft.retorick.ui.screen
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.util.Log
 import com.humancraft.retorick.data.model.Character
 import com.humancraft.retorick.data.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,11 +25,17 @@ class CharacterViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState>(UiState.InitialLoading)
     val uiState: StateFlow<UiState> = _uiState
 
-    private var lastValidPage: Int = 1
     private var lastValidCharacters: List<Character> = emptyList()
     private var firstLoadDone = false
 
-    fun fetchCharacters(page: Int) {
+    private val _currentPage = MutableStateFlow(1)
+    val currentPage: StateFlow<Int> = _currentPage
+
+    init {
+        fetchCharacters(1)
+    }
+
+    fun fetchCharacters(page: Int = _currentPage.value) {
         viewModelScope.launch {
             if (!firstLoadDone) {
                 _uiState.value = UiState.InitialLoading
@@ -38,29 +44,41 @@ class CharacterViewModel @Inject constructor(
             }
             try {
                 val response = repository.getCharacters(page)
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null) {
-                        val characters = body.results.take(3)
-                        lastValidPage = page
-                        lastValidCharacters = characters
-                        _uiState.value = UiState.Success(page, characters)
-                        firstLoadDone = true
-                    } else {
-                        _uiState.value = UiState.Error("Respuesta vacía del servidor")
-                    }
+                Log.d("CharacterViewModel", "HTTP response: code=${response.code()}, isSuccessful=${response.isSuccessful}")
+                if (!response.isSuccessful) {
+                    Log.e("CharacterViewModel", "Error response body: ${response.errorBody()?.string()}")
+                }
+                val body = response.body()
+                Log.d("CharacterViewModel", "Response body: $body")
+                val characters = body?.results?.take(3) ?: emptyList()
+                if (characters.isNotEmpty()) {
+                    _currentPage.value = page
+                    lastValidCharacters = characters
+                    _uiState.value = UiState.Success(page, characters)
+                    firstLoadDone = true
                 } else {
-                    _uiState.value = UiState.Error("Error: ${response.code()}")
+                    _uiState.value = UiState.Error("Respuesta vacía del servidor")
                 }
             } catch (e: Exception) {
-                _uiState.value = UiState.Error("Error de red o decodificación")
+                Log.e("CharacterViewModel", "Excepción al obtener personajes", e)
+                _uiState.value = UiState.Error("Error de red o decodificación: ${e.localizedMessage}")
             }
         }
     }
 
-    fun retryLast() {
-        fetchCharacters(lastValidPage)
+    fun nextPage() {
+        fetchCharacters(_currentPage.value + 1)
     }
 
-    fun getLastValid(): Pair<Int, List<Character>> = lastValidPage to lastValidCharacters
+    fun prevPage() {
+        if (_currentPage.value > 1) {
+            fetchCharacters(_currentPage.value - 1)
+        }
+    }
+
+    fun retryLast() {
+        fetchCharacters(_currentPage.value)
+    }
+
+    fun getLastValid(): Pair<Int, List<Character>> = _currentPage.value to lastValidCharacters
 }

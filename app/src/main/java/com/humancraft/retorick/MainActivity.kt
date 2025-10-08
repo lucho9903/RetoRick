@@ -21,14 +21,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             Surface(color = MaterialTheme.colorScheme.background) {
                 val uiState = viewModel.uiState.collectAsState().value
+                val currentPage = viewModel.currentPage.collectAsState().value
                 CharacterScreen(
                     uiState = uiState,
-                    onRefresh = { viewModel.fetchCharacters(viewModel.getLastValid().first) },
-                    onManualRefresh = { viewModel.fetchCharacters(viewModel.getLastValid().first) }
+                    onRefresh = {
+                        viewModel.fetchCharacters(currentPage + 1)
+                    },
+                    onManualRefresh = {
+                        viewModel.fetchCharacters(currentPage + 1)
+                    }
                 )
             }
         }
-        // Primera carga
-        viewModel.fetchCharacters(1)
     }
 }
