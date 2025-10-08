@@ -13,7 +13,7 @@ App Android que consume la API pública de Rick & Morty y muestra personajes usa
 
 1. **Clona el repositorio:**
    ```
-   git clone <URL_DEL_REPO>
+   git clone https://github.com/lucho9903/RetoRick
    ```
 2. **Abre el proyecto en Android Studio:**
    - Selecciona la carpeta `RetoRick`.
