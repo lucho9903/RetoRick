@@ -13,14 +13,14 @@ App Android que consume la API pública de Rick & Morty y muestra personajes usa
 
 1. **Clona el repositorio:**
    ```
-   git clone <URL_DEL_REPO>
+   git clone https://github.com/lucho9903/RetoRick
    ```
 2. **Abre el proyecto en Android Studio:**
    - Selecciona la carpeta `RetoRick`.
 3. **Sincroniza dependencias:**
    - Android Studio lo hará automáticamente al abrir el proyecto.
 4. **Ejecuta la app:**
-   - Haz clic en el botón "Run" (o presiona Shift+F10).
+   - Haz clic en el botón "Run" 
    - Selecciona un emulador o dispositivo físico.
 
 ## Funcionamiento
@@ -29,18 +29,4 @@ App Android que consume la API pública de Rick & Morty y muestra personajes usa
 - Cada 10 segundos o al pulsar el botón "Refrescar", la app avanza automáticamente a la siguiente página y muestra los primeros 3 personajes.
 - Si ocurre un error, se muestra un mensaje tipo Snackbar y se mantienen los datos previos.
 
-## Estructura principal
-- `app/src/main/java/com/humancraft/retorick/`
-  - `data/model/`: Modelos de datos
-  - `data/network/`: Interfaz de API
-  - `data/repository/`: Lógica de acceso a datos
-  - `di/`: Inyección de dependencias (Hilt)
-  - `ui/screen/`: ViewModel y UI Compose
-  - `MainActivity.kt`: Entry point
 
-## Notas
-- El proyecto sigue buenas prácticas de arquitectura y manejo de estados.
-- No requiere configuración adicional, solo conexión a internet.
-
-## Autor
-- Luis F. (adaptado por GitHub Copilot)
